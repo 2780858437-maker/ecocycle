@@ -1,0 +1,7 @@
+{
+  "name": "EcoCycle: Waste-to-Resource Platform",
+  "description": "A comprehensive waste recycling platform with role-based dashboards, simplified upload flows, and trust-centered credit systems for suppliers, buyers, and designers.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
