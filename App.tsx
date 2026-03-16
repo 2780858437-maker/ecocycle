@@ -9,7 +9,7 @@ import ProductDetail from './components/ProductDetail';
 import MarketHall from './components/MarketHall';
 import AuthScreen from './components/AuthScreen';
 import SettingsModule from './components/SettingsModule';
-import { Bell, User, LayoutDashboard, PlusCircle, Search, Settings, Recycle, LogOut, ShoppingBag } from 'lucide-react';
+import { Bell, User, LayoutDashboard, PlusCircle, Search, Settings, Recycle, LogOut, ShoppingBag, Menu, X } from 'lucide-react';
 
 const mockMaterial: MaterialInfo = {
   id: '10293',
@@ -31,6 +31,7 @@ const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.NONE);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'upload' | 'detail' | 'market' | 'settings'>('dashboard');
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialInfo>(mockMaterial);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (role === UserRole.NONE) {
     return <AuthScreen onLogin={setRole} />;
@@ -82,39 +83,43 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-100 bg-white hidden lg:flex flex-col sticky top-0 h-screen">
+      <aside className={`w-64 border-r border-slate-100 bg-white flex flex-col fixed lg:sticky top-0 h-screen z-50 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="p-8">
            <div 
-             className="flex items-center gap-3 text-emerald-600 mb-8 cursor-pointer"
-             onClick={() => setActiveTab('dashboard')}
+             className="flex items-center justify-between lg:justify-start gap-3 text-emerald-600 mb-8 cursor-pointer"
            >
-              <Recycle className="w-8 h-8" />
-              <span className="text-xl font-black text-slate-800">EcoCycle</span>
+              <div className="flex items-center gap-3" onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}>
+                <Recycle className="w-8 h-8" />
+                <span className="text-xl font-black text-slate-800">EcoCycle</span>
+              </div>
+              <button className="lg:hidden p-2 text-slate-400" onClick={() => setIsMobileMenuOpen(false)}>
+                <X className="w-6 h-6" />
+              </button>
            </div>
            
            <nav className="space-y-2">
              <button 
-               onClick={() => setActiveTab('dashboard')}
+               onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}
                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${activeTab === 'dashboard' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
              >
                <LayoutDashboard className="w-5 h-5" /> 工作台
              </button>
              <button 
-               onClick={() => setActiveTab('market')}
+               onClick={() => { setActiveTab('market'); setIsMobileMenuOpen(false); }}
                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${activeTab === 'market' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
              >
                <ShoppingBag className="w-5 h-5" /> 市场大厅
              </button>
              {role === UserRole.SUPPLIER && (
                <button 
-                 onClick={() => setActiveTab('upload')}
+                 onClick={() => { setActiveTab('upload'); setIsMobileMenuOpen(false); }}
                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${activeTab === 'upload' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
                >
                  <PlusCircle className="w-5 h-5" /> 发布货品
                </button>
              )}
              <button 
-               onClick={() => setActiveTab('settings')}
+               onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }}
                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${activeTab === 'settings' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
              >
                <Settings className="w-5 h-5" /> 系统设置
@@ -134,12 +139,20 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-100 px-8 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-black text-slate-300 uppercase tracking-widest">ECO</span>
-            <span className="text-sm font-bold text-slate-800">
-              {getActiveTitle()}
-            </span>
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+        )}
+        <header className="h-16 bg-white border-b border-slate-100 px-4 md:px-8 flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <button className="lg:hidden p-2 -ml-2 text-slate-600" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu className="w-6 h-6" />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-slate-300 uppercase tracking-widest">ECO</span>
+              <span className="text-sm font-bold text-slate-800">
+                {getActiveTitle()}
+              </span>
+            </div>
           </div>
           
           <div className="flex items-center gap-4">
